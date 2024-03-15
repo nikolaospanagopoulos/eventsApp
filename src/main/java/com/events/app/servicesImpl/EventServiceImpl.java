@@ -1,5 +1,8 @@
 package com.events.app.servicesImpl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.events.app.entities.Event;
@@ -16,15 +19,33 @@ public class EventServiceImpl implements EventService {
 		this.eventRepository = eventRepository;
 	}
 
-	@Override
-	public EventDto createEvent(EventDto event) {
+	private EventDto mapToDto(Event savedEvent) {
+		return new EventDto(savedEvent.getId(), savedEvent.getTitle(), savedEvent.getDescription(),
+				savedEvent.getEventDate(), savedEvent.getEventTime());
+	}
+
+	private Event mapToEventEntity(EventDto eventDto) {
 		Event eventEntity = new Event();
 
-		eventEntity.setDescription(event.getDescription());
-		eventEntity.setTitle(event.getTitle());
-		Event savedEvent = eventRepository.save(eventEntity);
+		eventEntity.setDescription(eventDto.getDescription());
+		eventEntity.setTitle(eventDto.getTitle());
+		eventEntity.setEventDate(eventDto.getEventDate());
+		eventEntity.setEventTime(eventDto.getEventTime());
+		return eventEntity;
+	}
 
-		return new EventDto(savedEvent.getId(), savedEvent.getTitle(), savedEvent.getDescription());
+	@Override
+	public EventDto createEvent(EventDto event) {
+		Event eventEntity = mapToEventEntity(event);
+		Event savedEvent = eventRepository.save(eventEntity);
+		EventDto eventDto = mapToDto(savedEvent);
+		return eventDto;
+	}
+
+	@Override
+	public List<EventDto> getAllEvents() {
+		return eventRepository.findAll().stream().map(ev -> mapToDto(ev)).collect(Collectors.toList());
+
 	}
 
 }
