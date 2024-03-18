@@ -8,4 +8,10 @@ public interface EventService {
 	EventDto createEvent(EventDto event);
 
 	List<EventDto> getAllEvents();
+
+	EventDto getEventById(long id);
+
+	EventDto updateEvent(EventDto eventDto, long id);
+
+	void deleteEventById(long id);
 }

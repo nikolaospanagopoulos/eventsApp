@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.events.app.entities.Event;
+import com.events.app.exception.ResourceNotFoundException;
 import com.events.app.payload.EventDto;
 import com.events.app.repositories.EventRepository;
 import com.events.app.services.EventService;
@@ -46,6 +47,32 @@ public class EventServiceImpl implements EventService {
 	public List<EventDto> getAllEvents() {
 		return eventRepository.findAll().stream().map(ev -> mapToDto(ev)).collect(Collectors.toList());
 
+	}
+
+	@Override
+	public EventDto getEventById(long id) {
+		Event found = eventRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Event", "id", Long.toString(id)));
+		return mapToDto(found);
+	}
+
+	@Override
+	public EventDto updateEvent(EventDto eventDto, long id) {
+		Event found = eventRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Event", "id", Long.toString(id)));
+		found.setDescription(eventDto.getDescription());
+		found.setEventDate(eventDto.getEventDate());
+		found.setEventTime(eventDto.getEventTime());
+		found.setTitle(eventDto.getTitle());
+		Event updatedEvent = eventRepository.save(found);
+		return mapToDto(updatedEvent);
+	}
+
+	@Override
+	public void deleteEventById(long id) {
+		Event found = eventRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Event", "id", Long.toString(id)));
+		eventRepository.delete(found);
 	}
 
 }

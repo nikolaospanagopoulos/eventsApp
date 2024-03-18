@@ -3,7 +3,9 @@ package com.events.app.payload;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class EventDto {
+import com.events.app.utilis.DataResponse;
+
+public class EventDto implements DataResponse{
 	private Long id;
 	private String title;
 	private String description;
