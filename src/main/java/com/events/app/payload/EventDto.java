@@ -3,11 +3,18 @@ package com.events.app.payload;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.events.app.utilis.DataResponse;
+import com.events.app.payload.dataInterface.DataResponse;
 
-public class EventDto implements DataResponse{
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+
+public class EventDto implements DataResponse {
 	private Long id;
+
+	@NotEmpty
+	@Size(min = 2, message = "Event title should have at least two characters")
 	private String title;
+	@NotEmpty
 	private String description;
 	private LocalDate eventDate;
 	private LocalTime eventTime;

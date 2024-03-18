@@ -17,6 +17,8 @@ import com.events.app.payload.ApiResponse;
 import com.events.app.payload.EventDto;
 import com.events.app.services.EventService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
@@ -28,7 +30,7 @@ public class EventController {
 	}
 
 	@PostMapping
-	public ResponseEntity<ApiResponse> createEvent(@RequestBody EventDto eventDto) {
+	public ResponseEntity<ApiResponse> createEvent(@Valid @RequestBody EventDto eventDto) {
 		ApiResponse apiResponse = new ApiResponse(this.eventService.createEvent(eventDto));
 		return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
 	}
@@ -45,7 +47,8 @@ public class EventController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<ApiResponse> updateEvent(@RequestBody EventDto eventDto, @PathVariable(name = "id") long id) {
+	public ResponseEntity<ApiResponse> updateEvent(@Valid @RequestBody EventDto eventDto,
+			@PathVariable(name = "id") long id) {
 		ApiResponse apiResponse = new ApiResponse(this.eventService.updateEvent(eventDto, id));
 		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
 	}

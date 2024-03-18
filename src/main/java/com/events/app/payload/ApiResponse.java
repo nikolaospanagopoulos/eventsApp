@@ -1,6 +1,6 @@
 package com.events.app.payload;
 
-import com.events.app.utilis.DataResponse;
+import com.events.app.payload.dataInterface.DataResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class ApiResponse {

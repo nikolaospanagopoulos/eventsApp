@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.events.app.entities.Event;
+import com.events.app.exception.ResourceAlreadyExistsException;
 import com.events.app.exception.ResourceNotFoundException;
 import com.events.app.payload.EventDto;
 import com.events.app.repositories.EventRepository;
@@ -37,6 +38,9 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public EventDto createEvent(EventDto event) {
+		if (eventRepository.existsByTitle(event.getTitle())) {
+			throw new ResourceAlreadyExistsException("Event", "title", event.getTitle());
+		}
 		Event eventEntity = mapToEventEntity(event);
 		Event savedEvent = eventRepository.save(eventEntity);
 		EventDto eventDto = mapToDto(savedEvent);
