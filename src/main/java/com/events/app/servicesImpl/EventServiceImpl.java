@@ -3,12 +3,17 @@ package com.events.app.servicesImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.events.app.entities.Event;
 import com.events.app.exception.ResourceAlreadyExistsException;
 import com.events.app.exception.ResourceNotFoundException;
 import com.events.app.payload.EventDto;
+import com.events.app.payload.EventResponsePaginationObj;
 import com.events.app.repositories.EventRepository;
 import com.events.app.services.EventService;
 
@@ -48,9 +53,20 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
-	public List<EventDto> getAllEvents() {
-		return eventRepository.findAll().stream().map(ev -> mapToDto(ev)).collect(Collectors.toList());
+	public EventResponsePaginationObj getAllEvents(int pageNo, int pageSize, String sortBy, String sortDir) {
 
+		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.DESC.name()) ? Sort.by(sortBy).descending()
+				: Sort.by(sortBy).ascending();
+
+		Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+		System.out.println(pageable);
+		Page<Event> events = eventRepository.findAll(pageable);
+
+		List<Event> listOfEvents = events.getContent();
+		List<EventDto> content = listOfEvents.stream().map(ev -> mapToDto(ev)).collect(Collectors.toList());
+		EventResponsePaginationObj eventObjRes = new EventResponsePaginationObj(content, events.getNumber(),
+				events.getSize(), events.getTotalElements(), events.getTotalPages(), events.isLast());
+		return eventObjRes;
 	}
 
 	@Override

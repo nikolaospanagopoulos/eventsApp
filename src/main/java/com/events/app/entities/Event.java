@@ -2,12 +2,16 @@ package com.events.app.entities;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
@@ -26,6 +30,8 @@ public class Event {
 	private LocalDate eventDate;
 	@Column(name = "event_time", nullable = false)
 	private LocalTime eventTime;
+	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+	private Set<Ticket> tickets = new HashSet<Ticket>();
 
 	public Event(Long id, String title, String description, LocalDate eventDate, LocalTime eventTime) {
 		super();
@@ -84,6 +90,14 @@ public class Event {
 	public String toString() {
 		return "Event [id=" + id + ", title=" + title + ", description=" + description + ", eventDate=" + eventDate
 				+ ", eventTime=" + eventTime + "]";
+	}
+
+	public Set<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(Set<Ticket> tickets) {
+		this.tickets = tickets;
 	}
 
 }

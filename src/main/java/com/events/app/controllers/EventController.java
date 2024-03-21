@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.events.app.payload.ApiResponse;
 import com.events.app.payload.EventDto;
+import com.events.app.payload.EventResponsePaginationObj;
 import com.events.app.services.EventService;
+import com.events.app.utilis.ApplicationConstants;
 
 import jakarta.validation.Valid;
 
@@ -36,8 +39,14 @@ public class EventController {
 	}
 
 	@GetMapping
-	public List<EventDto> getAllEvents() {
-		return eventService.getAllEvents();
+	public ResponseEntity<ApiResponse> getAllEvents(
+			@RequestParam(value = "pageNo", defaultValue = ApplicationConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+			@RequestParam(value = "pageSize", defaultValue = ApplicationConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+			@RequestParam(value = "sortBy", defaultValue = ApplicationConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+			@RequestParam(value = "sortDir", defaultValue = ApplicationConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir) {
+
+		ApiResponse apiResponse = new ApiResponse(eventService.getAllEvents(pageNo, pageSize, sortBy, sortDir));
+		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")

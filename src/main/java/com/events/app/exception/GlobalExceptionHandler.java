@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponseDto> handleRuntimeException(RuntimeException ex) {
-		ErrorResponseDto errorResponse = new ErrorResponseDto("An unexpected error occurred", "GENERIC_ERROR_CODE");
+		ErrorResponseDto errorResponse = new ErrorResponseDto("An unexpected error occurred", "500");
 		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
