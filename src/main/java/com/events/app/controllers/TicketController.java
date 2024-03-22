@@ -2,9 +2,11 @@ package com.events.app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,5 +44,26 @@ public class TicketController {
 		ApiResponse apiResponse = new ApiResponse(
 				this.ticketService.getTicketsByEventId(eventId, pageNo, pageSize, sortBy, sortDir));
 		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+	}
+
+	@GetMapping("/events/{eventId}/tickets/{ticketId}")
+	public ResponseEntity<ApiResponse> getTicketForEventById(@PathVariable(value = "eventId") long eventId,
+			@PathVariable(value = "ticketId") long ticketId) {
+		ApiResponse apiResponse = new ApiResponse(this.ticketService.getTicketById(eventId, ticketId));
+		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+	}
+
+	@PutMapping("/events/{eventId}/tickets/{ticketId}")
+	public ResponseEntity<ApiResponse> updateTicket(@PathVariable(value = "eventId") long eventId,
+			@PathVariable(value = "ticketId") long ticketId, @RequestBody TicketDto ticketDto) {
+		ApiResponse apiResponse = new ApiResponse(this.ticketService.updateTicket(eventId, ticketId, ticketDto));
+		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/events/{eventId}/tickets/{ticketId}")
+	public ResponseEntity<ApiResponse> deleteTicket(@PathVariable(value = "eventId") long eventId,
+			@PathVariable(value = "ticketId") long ticketId) {
+		ticketService.deleteTicket(eventId, ticketId);
+		return new ResponseEntity<>(new ApiResponse("deleted successfully"), HttpStatus.OK);
 	}
 }

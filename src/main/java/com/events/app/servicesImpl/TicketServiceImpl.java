@@ -3,6 +3,7 @@ package com.events.app.servicesImpl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,39 +40,13 @@ public class TicketServiceImpl implements TicketService {
 	@Override
 	public TicketDto createTicket(long eventId, TicketDto ticketDto) {
 		Ticket ticket = modelMapper.map(ticketDto, Ticket.class);
-		Event event = eventRepository.findById(eventId)
-				.orElseThrow(() -> new ResourceNotFoundException("Event", "id", Long.toString(eventId)));
+		Event event = getEventById(eventId);
 		ticket.setEvent(event);
 
 		Ticket newTicket = ticketRepository.save(ticket);
 
 		return modelMapper.map(newTicket, TicketDto.class);
 	}
-
-	@Override
-
-	/*
-	 * 
-	 * @Override public EventResponsePaginationObj getAllEvents(int pageNo, int
-	 * pageSize, String sortBy, String sortDir) {
-	 * 
-	 * Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.DESC.name()) ?
-	 * Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-	 * 
-	 * Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-	 * System.out.println(pageable); Page<Event> events =
-	 * eventRepository.findAll(pageable);
-	 * 
-	 * List<Event> listOfEvents = events.getContent(); List<EventDto> content =
-	 * listOfEvents.stream().map(ev -> mapToDto(ev)).collect(Collectors.toList());
-	 * EventResponsePaginationObj eventObjRes = new
-	 * EventResponsePaginationObj(content, events.getNumber(), events.getSize(),
-	 * events.getTotalElements(), events.getTotalPages(), events.isLast()); return
-	 * eventObjRes; }
-	 * 
-	 * 
-	 * 
-	 */
 
 	public TicketResponsePaginationObj getTicketsByEventId(long eventId, int pageNo, int pageSize, String sortBy,
 			String sortDir) {
@@ -96,6 +71,58 @@ public class TicketServiceImpl implements TicketService {
 				ticketsPage.isLast());
 
 		return ticketObjRes;
+	}
+
+	private Event getEventById(long eventId) {
+		return eventRepository.findById(eventId)
+				.orElseThrow(() -> new ResourceNotFoundException("Event", "id", Long.toString(eventId)));
+	}
+
+	private Ticket getTicketByEventId(long eventId, long ticketId) {
+		return ticketRepository.findById(ticketId)
+				.orElseThrow(() -> new ResourceNotFoundException("Ticket", "id", Long.toString(ticketId)));
+	}
+
+	@Override
+	public TicketDto getTicketById(long eventId, long ticketId) {
+		Event event = getEventById(eventId);
+		Ticket ticket = getTicketByEventId(eventId, ticketId);
+		if (!ticket.getEvent().getId().equals(event.getId())) {
+			throw new ResourceNotFoundException("Ticket", "id", Long.toString(ticketId));
+		}
+		return modelMapper.map(ticket, TicketDto.class);
+	}
+
+	@Override
+	public TicketDto updateTicket(long eventId, long ticketId, TicketDto ticketDto) {
+		Event event = getEventById(eventId);
+		Ticket ticket = getTicketByEventId(eventId, ticketId);
+
+		if (!ticket.getEvent().getId().equals(event.getId())) {
+			throw new ResourceNotFoundException("Ticket", "id", Long.toString(ticketId));
+		}
+
+		ticket.setCreatedDate(ticketDto.getCreatedDate());
+		ticket.setDateOfPurchase(ticketDto.getDateOfPurchase());
+		ticket.setDescription(ticketDto.getDescription());
+		ticket.setPrice(ticketDto.getPrice());
+		ticket.setStatus(ticketDto.getStatus());
+		ticket.setTitle(ticketDto.getTitle());
+
+		ticketRepository.save(ticket);
+
+		return modelMapper.map(ticket, TicketDto.class);
+	}
+
+	@Override
+	public void deleteTicket(long eventId, long ticketId) {
+		// TODO Auto-generated method stub
+		Event event = getEventById(eventId);
+		Ticket ticket = getTicketByEventId(eventId, ticketId);
+		if (!ticket.getEvent().getId().equals(event.getId())) {
+			throw new ResourceNotFoundException("Ticket", "id", Long.toString(ticketId));
+		}
+		ticketRepository.delete(ticket);
 	}
 
 }

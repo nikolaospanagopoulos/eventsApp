@@ -1,6 +1,6 @@
 package com.events.app.controllers;
 
-import java.util.List;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.events.app.payload.ApiResponse;
 import com.events.app.payload.EventDto;
-import com.events.app.payload.EventResponsePaginationObj;
+
 import com.events.app.services.EventService;
 import com.events.app.utilis.ApplicationConstants;
 

@@ -37,6 +37,7 @@ public class GlobalExceptionHandler {
 		});
 		return ResponseEntity.badRequest().body(errors);
 	}
+ 
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponseDto> handleRuntimeException(RuntimeException ex) {
