@@ -1,9 +1,8 @@
 package com.events.app.controllers;
 
-
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +31,7 @@ public class EventController {
 		this.eventService = eventService;
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<ApiResponse> createEvent(@Valid @RequestBody EventDto eventDto) {
 		ApiResponse apiResponse = new ApiResponse(this.eventService.createEvent(eventDto));
@@ -55,6 +55,7 @@ public class EventController {
 		return new ResponseEntity<>(new ApiResponse(this.eventService.getEventById(id)), HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse> updateEvent(@Valid @RequestBody EventDto eventDto,
 			@PathVariable(name = "id") long id) {
@@ -62,6 +63,7 @@ public class EventController {
 		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse> deleteEventById(@PathVariable(name = "id") long id) {
 		this.eventService.deleteEventById(id);

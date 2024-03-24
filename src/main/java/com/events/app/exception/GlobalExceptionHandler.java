@@ -37,7 +37,12 @@ public class GlobalExceptionHandler {
 		});
 		return ResponseEntity.badRequest().body(errors);
 	}
- 
+
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(UserNotFoundException ex) {
+		ErrorResponseDto errorResponse = new ErrorResponseDto(ex.getMessage(), "404");
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponseDto> handleRuntimeException(RuntimeException ex) {
