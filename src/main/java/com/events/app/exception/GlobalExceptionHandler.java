@@ -26,6 +26,18 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler(InvalidJwtException.class)
+	public ResponseEntity<ErrorResponseDto> handleInvalidJwtException(InvalidJwtException ex) {
+		ErrorResponseDto errorResponse = new ErrorResponseDto(ex.getMessage(), "404");
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public ResponseEntity<ErrorResponseDto> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+		ErrorResponseDto errorResponse = new ErrorResponseDto(ex.getMessage(), "409");
+		return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+	}
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<String, String>();
@@ -46,7 +58,8 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResponseDto> handleRuntimeException(RuntimeException ex) {
-		ErrorResponseDto errorResponse = new ErrorResponseDto("An unexpected error occurred", "500");
+		ErrorResponseDto errorResponse = new ErrorResponseDto(
+				ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred", "500");
 		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
