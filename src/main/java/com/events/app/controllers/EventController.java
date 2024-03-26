@@ -3,6 +3,8 @@ package com.events.app.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,19 +35,24 @@ public class EventController {
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
-	public ResponseEntity<ApiResponse> createEvent(@Valid @RequestBody EventDto eventDto) {
+	public ResponseEntity<ApiResponse> createEvent(@AuthenticationPrincipal UserDetails userDetails,@Valid @RequestBody EventDto eventDto) {
+		
+		System.out.println(userDetails);
 		ApiResponse apiResponse = new ApiResponse(this.eventService.createEvent(eventDto));
+		System.out.println("Current user: " + userDetails.getUsername());
 		return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
 	}
 
 	@GetMapping
 	public ResponseEntity<ApiResponse> getAllEvents(
+			
 			@RequestParam(value = "pageNo", defaultValue = ApplicationConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
 			@RequestParam(value = "pageSize", defaultValue = ApplicationConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
 			@RequestParam(value = "sortBy", defaultValue = ApplicationConstants.DEFAULT_SORT_BY, required = false) String sortBy,
 			@RequestParam(value = "sortDir", defaultValue = ApplicationConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir) {
 
 		ApiResponse apiResponse = new ApiResponse(eventService.getAllEvents(pageNo, pageSize, sortBy, sortDir));
+		
 		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
 	}
 

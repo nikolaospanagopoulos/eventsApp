@@ -12,9 +12,10 @@ public class TicketDto implements DataResponse {
 	private String status;
 	private LocalDate dateOfPurchase;
 	private LocalDate createdDate;
+	private UserDto boughtBy;
 
 	public TicketDto(Long id, String title, String description, double price, String status, LocalDate dateOfPurchase,
-			LocalDate createdDate) {
+			LocalDate createdDate, UserDto userDto) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -23,6 +24,15 @@ public class TicketDto implements DataResponse {
 		this.status = status;
 		this.dateOfPurchase = dateOfPurchase;
 		this.createdDate = createdDate;
+		this.boughtBy = userDto;
+	}
+
+	public UserDto getBoughtBy() {
+		return boughtBy;
+	}
+
+	public void setBoughtBy(UserDto boughtBy) {
+		this.boughtBy = boughtBy;
 	}
 
 	public TicketDto() {

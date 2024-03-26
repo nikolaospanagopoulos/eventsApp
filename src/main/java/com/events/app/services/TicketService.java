@@ -1,5 +1,6 @@
 package com.events.app.services;
 
+import com.events.app.payload.PaymentDto;
 import com.events.app.payload.TicketDto;
 import com.events.app.payload.TicketResponsePaginationObj;
 
@@ -14,4 +15,6 @@ public interface TicketService {
 	TicketDto updateTicket(long eventId, long ticketId, TicketDto ticketDto);
 
 	void deleteTicket(long eventId, long ticketId);
+
+	TicketDto buyTicket(long eventId, long ticketId, String username, PaymentDto paymentDto);
 }

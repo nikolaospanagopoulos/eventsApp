@@ -13,28 +13,35 @@ import org.springframework.stereotype.Service;
 
 import com.events.app.entities.Event;
 import com.events.app.entities.Ticket;
+import com.events.app.entities.User;
 import com.events.app.exception.ResourceNotFoundException;
+import com.events.app.exception.UserNotFoundException;
 import com.events.app.payload.EventDto;
 import com.events.app.payload.EventResponsePaginationObj;
+import com.events.app.payload.PaymentDto;
 import com.events.app.payload.TicketDto;
 import com.events.app.payload.TicketResponsePaginationObj;
+import com.events.app.payload.UserDto;
 import com.events.app.repositories.EventRepository;
 import com.events.app.repositories.TicketRepository;
+import com.events.app.repositories.UserRepository;
 import com.events.app.services.TicketService;
 
 @Service
 public class TicketServiceImpl implements TicketService {
 	TicketRepository ticketRepository;
 	EventRepository eventRepository;
+	UserRepository userRepository;
 
 	ModelMapper modelMapper;
 
 	public TicketServiceImpl(TicketRepository ticketRepository, ModelMapper modelMapper,
-			EventRepository eventRepository) {
+			EventRepository eventRepository, UserRepository userRepository) {
 		super();
 		this.ticketRepository = ticketRepository;
 		this.modelMapper = modelMapper;
 		this.eventRepository = eventRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -123,6 +130,32 @@ public class TicketServiceImpl implements TicketService {
 			throw new ResourceNotFoundException("Ticket", "id", Long.toString(ticketId));
 		}
 		ticketRepository.delete(ticket);
+	}
+
+	@Override
+	public TicketDto buyTicket(long eventId, long ticketId, String username, PaymentDto paymentDto) {
+		Event event = getEventById(eventId);
+		Ticket ticket = getTicketByEventId(eventId, ticketId);
+		if (!ticket.getEvent().getId().equals(event.getId())) {
+			throw new ResourceNotFoundException("Ticket", "id", Long.toString(ticketId));
+		}
+		User currentUser = userRepository.findByUsername(username)
+				.orElseThrow(() -> new UserNotFoundException("username", username));
+
+		ticket.setUser(currentUser);
+
+		ticketRepository.save(ticket);
+
+		System.out.println(currentUser);
+
+		TicketDto boughtTicket = modelMapper.map(ticket, TicketDto.class);
+
+		//TODO: check currentuser is same as user that wants to buy
+		
+		boughtTicket.setBoughtBy(modelMapper.map(currentUser, UserDto.class));
+
+		return boughtTicket;
+
 	}
 
 }

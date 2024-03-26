@@ -1,5 +1,6 @@
 package com.events.app.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -36,7 +38,11 @@ public class User {
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private Set<Role> roles;
 
-	public User(Long id, String name, String surname, String username, String password, String email, Set<Role> roles) {
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<Ticket> tickets = new HashSet<Ticket>();
+
+	public User(Long id, String name, String surname, String username, String password, String email, Set<Role> roles,
+			Set<Ticket> tickets) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -45,6 +51,15 @@ public class User {
 		this.password = password;
 		this.email = email;
 		this.roles = roles;
+		this.tickets = tickets;
+	}
+
+	public Set<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(Set<Ticket> tickets) {
+		this.tickets = tickets;
 	}
 
 	public User() {

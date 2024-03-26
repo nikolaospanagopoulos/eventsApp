@@ -2,6 +2,8 @@ package com.events.app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.events.app.payload.ApiResponse;
+import com.events.app.payload.PaymentDto;
 import com.events.app.payload.TicketDto;
 import com.events.app.services.TicketService;
 import com.events.app.utilis.ApplicationConstants;
@@ -32,6 +35,15 @@ public class TicketController {
 			@RequestBody TicketDto ticketDto) {
 		ApiResponse apiResponse = new ApiResponse(this.ticketService.createTicket(eventId, ticketDto));
 		return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+	}
+
+	@PutMapping("/events/{eventId}/tickets/{ticketId}/buy")
+	public ResponseEntity<ApiResponse> buyTicket(@AuthenticationPrincipal UserDetails userDetails,
+			@RequestBody PaymentDto paymentDto, @PathVariable(value = "eventId") long eventId,
+			@PathVariable(value = "ticketId") long ticketId) {
+		ApiResponse apiResponse = new ApiResponse(
+				this.ticketService.buyTicket(eventId, ticketId, userDetails.getUsername(), paymentDto));
+		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
 	}
 
 	@GetMapping("/events/{eventId}/tickets")

@@ -31,8 +31,12 @@ public class Ticket {
 	@JoinColumn(name = "event_id", nullable = false)
 	private Event event;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+
 	public Ticket(Long id, String title, String description, double price, String status, LocalDate dateOfPurchase,
-			LocalDate createdDate, Event event) {
+			LocalDate createdDate, Event event, User user) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -42,6 +46,15 @@ public class Ticket {
 		this.dateOfPurchase = dateOfPurchase;
 		this.createdDate = createdDate;
 		this.event = event;
+		this.user = user;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Event getEvent() {
