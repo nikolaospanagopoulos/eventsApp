@@ -16,5 +16,5 @@ public interface TicketService {
 
 	void deleteTicket(long eventId, long ticketId);
 
-	TicketDto buyTicket(long eventId, long ticketId, String username, PaymentDto paymentDto);
+	TicketDto buyTicket(long eventId, long ticketId, PaymentDto paymentDto);
 }

@@ -1,12 +1,12 @@
 package com.events.app.payload;
 
 public class LoginDto {
-	private String email;
+	private String usernameOrEmail;
 	private String password;
 
-	public LoginDto(String email, String password) {
+	public LoginDto(String usernameOrEmail, String password) {
 		super();
-		this.email = email;
+		this.usernameOrEmail = usernameOrEmail;
 		this.password = password;
 	}
 
@@ -14,12 +14,12 @@ public class LoginDto {
 
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUsernameOrEmail() {
+		return usernameOrEmail;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsernameOrEmail(String usernameOrEmail) {
+		this.usernameOrEmail = usernameOrEmail;
 	}
 
 	public String getPassword() {

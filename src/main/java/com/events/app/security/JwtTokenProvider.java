@@ -36,6 +36,7 @@ public class JwtTokenProvider {
 	}
 
 	public String getUsername(String token) {
+		
 		return Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(token).getPayload().getSubject();
 	}
 

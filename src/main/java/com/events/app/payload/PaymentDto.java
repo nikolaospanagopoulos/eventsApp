@@ -4,12 +4,22 @@ public class PaymentDto {
 	private String name;
 	private String surname;
 	private String username;
+	private String email;
 
-	public PaymentDto(String name, String surname, String username) {
+	public PaymentDto(String name, String surname, String username, String email) {
 		super();
 		this.name = name;
 		this.surname = surname;
 		this.username = username;
+		this.email = email;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public PaymentDto() {

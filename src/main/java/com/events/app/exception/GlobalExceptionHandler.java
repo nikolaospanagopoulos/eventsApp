@@ -38,6 +38,12 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
 	}
 
+	@ExceptionHandler(TicketAlreadyBoughtException.class)
+	public ResponseEntity<ErrorResponseDto> handleTicketAlreadyBoughtException(TicketAlreadyBoughtException ex) {
+		ErrorResponseDto errorResponse = new ErrorResponseDto(ex.getMessage(), "409");
+		return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+	}
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<String, String>();

@@ -33,9 +33,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User foundUser = userRepository.findByEmail(email)
-				.orElseThrow(() -> (new UserNotFoundException("email", email)));
+	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+		User foundUser = userRepository.findByUsernameOrEmail(usernameOrEmail,usernameOrEmail)
+				.orElseThrow(() -> (new UserNotFoundException("usernameOrEmail", usernameOrEmail)));
 		Set<GrantedAuthority> authorities = foundUser.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
 

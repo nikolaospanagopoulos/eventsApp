@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -31,10 +32,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		String token = getTokenFromRequest(request);
+		String token = null;
+
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("JWT")) {
+					token = cookie.getValue();
+					break;
+				}
+			}
+		}
+		System.out.println(token);
 		if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
 			String username = jwtTokenProvider.getUsername(token);
-
+			System.out.println(username+"@@@@");
 			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

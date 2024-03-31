@@ -59,7 +59,7 @@ public class EventServiceImpl implements EventService {
 				: Sort.by(sortBy).ascending();
 
 		Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-		System.out.println(pageable);
+		
 		Page<Event> events = eventRepository.findAll(pageable);
 
 		List<Event> listOfEvents = events.getContent();

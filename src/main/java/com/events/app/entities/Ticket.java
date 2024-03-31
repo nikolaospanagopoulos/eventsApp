@@ -18,6 +18,15 @@ public class Ticket {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	public String getTicketUniqueIdentifier() {
+		return ticketUniqueIdentifier;
+	}
+
+	public void setTicketUniqueIdentifier(String ticketUniqueIdentifier) {
+		this.ticketUniqueIdentifier = ticketUniqueIdentifier;
+	}
+
 	private String title;
 	private String description;
 	private double price;
@@ -26,6 +35,8 @@ public class Ticket {
 	private LocalDate dateOfPurchase;
 	@Column(name = "created_date", nullable = false)
 	private LocalDate createdDate;
+	@Column(name = "unique_identifier", nullable = true)
+	private String ticketUniqueIdentifier;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_id", nullable = false)
@@ -47,6 +58,7 @@ public class Ticket {
 		this.createdDate = createdDate;
 		this.event = event;
 		this.user = user;
+		this.ticketUniqueIdentifier = null;
 	}
 
 	public User getUser() {
@@ -128,7 +140,8 @@ public class Ticket {
 	@Override
 	public String toString() {
 		return "Ticket [id=" + id + ", title=" + title + ", description=" + description + ", price=" + price
-				+ ", status=" + status + ", dateOfPurchase=" + dateOfPurchase + ", createdDate=" + createdDate + "]";
+				+ ", status=" + status + ", dateOfPurchase=" + dateOfPurchase + ", createdDate=" + createdDate
+				+ ", ticketUniqueIdentifier=" + ticketUniqueIdentifier + ", event=" + event + ", user=" + user + "]";
 	}
 
 }

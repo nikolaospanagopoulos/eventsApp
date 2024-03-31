@@ -38,11 +38,9 @@ public class TicketController {
 	}
 
 	@PutMapping("/events/{eventId}/tickets/{ticketId}/buy")
-	public ResponseEntity<ApiResponse> buyTicket(@AuthenticationPrincipal UserDetails userDetails,
-			@RequestBody PaymentDto paymentDto, @PathVariable(value = "eventId") long eventId,
-			@PathVariable(value = "ticketId") long ticketId) {
-		ApiResponse apiResponse = new ApiResponse(
-				this.ticketService.buyTicket(eventId, ticketId, userDetails.getUsername(), paymentDto));
+	public ResponseEntity<ApiResponse> buyTicket(@RequestBody PaymentDto paymentDto,
+			@PathVariable(value = "eventId") long eventId, @PathVariable(value = "ticketId") long ticketId) {
+		ApiResponse apiResponse = new ApiResponse(this.ticketService.buyTicket(eventId, ticketId, paymentDto));
 		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
 	}
 
