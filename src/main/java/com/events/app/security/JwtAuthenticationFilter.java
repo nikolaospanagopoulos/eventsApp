@@ -43,10 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				}
 			}
 		}
-		System.out.println(token);
+
 		if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
 			String username = jwtTokenProvider.getUsername(token);
-			System.out.println(username+"@@@@");
+
 			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

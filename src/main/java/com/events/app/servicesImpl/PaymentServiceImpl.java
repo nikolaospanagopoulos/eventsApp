@@ -3,6 +3,8 @@ package com.events.app.servicesImpl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.events.app.services.PaymentService;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -10,7 +12,7 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Charge;
-
+@Service
 public class PaymentServiceImpl implements PaymentService{
 
 	@Override
@@ -20,7 +22,7 @@ public class PaymentServiceImpl implements PaymentService{
         chargeParams.put("currency", "USD");
         chargeParams.put("source", token); // Obtain the Stripe token from the front-end
         chargeParams.put("description", "Charge for a ticket");
-
+        
         return Charge.create(chargeParams);
 	}
 

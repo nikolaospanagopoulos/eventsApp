@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.events.app.entities.Event;
 import com.events.app.entities.Ticket;
 import com.events.app.entities.User;
+import com.events.app.exception.PaymentException;
 import com.events.app.exception.ResourceNotFoundException;
 import com.events.app.exception.TicketAlreadyBoughtException;
 import com.events.app.exception.UserNotFoundException;
@@ -29,9 +30,16 @@ import com.events.app.repositories.EventRepository;
 import com.events.app.repositories.TicketRepository;
 import com.events.app.repositories.UserRepository;
 import com.events.app.services.EmailService;
+import com.events.app.services.PaymentService;
 import com.events.app.services.TicketService;
 import com.events.app.utilis.QRcodeUtil;
 import com.events.app.utilis.TicketUtil;
+import com.stripe.exception.APIConnectionException;
+import com.stripe.exception.APIException;
+import com.stripe.exception.AuthenticationException;
+import com.stripe.exception.CardException;
+import com.stripe.exception.InvalidRequestException;
+import com.stripe.model.Charge;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -39,17 +47,20 @@ public class TicketServiceImpl implements TicketService {
 	EventRepository eventRepository;
 	UserRepository userRepository;
 	EmailService emailService;
+	PaymentService paymentService;
 
 	ModelMapper modelMapper;
 
 	public TicketServiceImpl(TicketRepository ticketRepository, ModelMapper modelMapper,
-			EventRepository eventRepository, UserRepository userRepository, EmailService emailService) {
+			EventRepository eventRepository, UserRepository userRepository, EmailService emailService,
+			PaymentService paymentService) {
 		super();
 		this.ticketRepository = ticketRepository;
 		this.modelMapper = modelMapper;
 		this.eventRepository = eventRepository;
 		this.userRepository = userRepository;
 		this.emailService = emailService;
+		this.paymentService = paymentService;
 	}
 
 	private void processTicketPurchase(String userEmail, String ticketId) {
@@ -168,9 +179,23 @@ public class TicketServiceImpl implements TicketService {
 		}
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String authenticatedUsername = authentication.getName();
-		
+
 		User currentUser = userRepository.findByUsername(authenticatedUsername)
 				.orElseThrow(() -> new UserNotFoundException("username", authenticatedUsername));
+
+		try {
+			Charge charge = paymentService.chargeNewCard("tok_visa", 50);
+		} catch (AuthenticationException e) {
+			throw new PaymentException(e.getMessage());
+		} catch (InvalidRequestException e) {
+			throw new PaymentException(e.getMessage());
+		} catch (APIConnectionException e) {
+			throw new PaymentException(e.getMessage());
+		} catch (CardException e) {
+			throw new PaymentException(e.getMessage());
+		} catch (APIException e) {
+			throw new PaymentException(e.getMessage());
+		}
 
 		ticket.setUser(currentUser);
 
@@ -179,8 +204,6 @@ public class TicketServiceImpl implements TicketService {
 		ticket.setTicketUniqueIdentifier(uniqueIdentifier);
 		processTicketPurchase(paymentDto.getEmail(), Long.toString(ticketId));
 		ticketRepository.save(ticket);
-
-		
 
 		TicketDto boughtTicket = modelMapper.map(ticket, TicketDto.class);
 

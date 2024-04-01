@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.events.app.payload.ErrorResponseDto;
+import com.stripe.exception.AuthenticationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -60,6 +61,19 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(UserNotFoundException ex) {
 		ErrorResponseDto errorResponse = new ErrorResponseDto(ex.getMessage(), "404");
 		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(PaymentException.class)
+	public ResponseEntity<ErrorResponseDto> handlePaymentException(PaymentException ex) {
+		ErrorResponseDto errorResponse = new ErrorResponseDto(ex.getMessage(), "404");
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<String> handleAuthenticationException(AuthenticationException exception) {
+		// You can customize your response here
+		System.out.println("PIDARAS");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: " + exception.getMessage());
 	}
 
 	@ExceptionHandler(RuntimeException.class)
